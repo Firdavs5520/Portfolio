@@ -2,6 +2,7 @@ const root = document.documentElement;
 const themeToggle = document.querySelector("#themeToggle");
 const copyEmail = document.querySelector("#copyEmail");
 const email = "sharipovfirdavs5520@gmail.com";
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 document.querySelector("#year").textContent = new Date().getFullYear();
 
@@ -44,13 +45,52 @@ copyEmail.addEventListener("click", async () => {
   }, 2200);
 });
 
+let ticking = false;
+
+function updateScrollMotion() {
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+
+  root.style.setProperty("--scroll-progress", `${Math.min(progress, 100)}%`);
+
+  if (!reduceMotion) {
+    root.style.setProperty("--parallax-y", `${Math.min(window.scrollY * 0.12, 90)}px`);
+  }
+
+  ticking = false;
+}
+
+function requestScrollUpdate() {
+  if (!ticking) {
+    window.requestAnimationFrame(updateScrollMotion);
+    ticking = true;
+  }
+}
+
+window.addEventListener("scroll", requestScrollUpdate, { passive: true });
+window.addEventListener("resize", requestScrollUpdate);
+updateScrollMotion();
+
 const revealItems = document.querySelectorAll(
-  ".intro-band, .metric, .section-heading, .project-card, .skill-list span, .contact-copy, .contact-link"
+  ".intro-band, .section-grid > div, .section-grid > p, .metric, .section-heading, .project-card, .skill-list span, .contact-copy, .contact-link, .site-footer"
 );
 
 revealItems.forEach((item, index) => {
   item.classList.add("reveal");
-  item.style.setProperty("--reveal-delay", `${Math.min(index * 45, 260)}ms`);
+
+  if (item.matches(".section-grid > div, .section-heading, .contact-copy")) {
+    item.classList.add("reveal-left");
+  } else if (item.matches(".section-grid > p, .contact-link, .site-footer")) {
+    item.classList.add("reveal-right");
+  } else if (item.matches(".project-card")) {
+    item.classList.add("reveal-zoom");
+  } else if (item.matches(".metric, .skill-list span")) {
+    item.classList.add("reveal-pop");
+  }
+
+  const siblingIndex = Array.from(item.parentElement?.children || []).indexOf(item);
+  const delayIndex = siblingIndex >= 0 ? siblingIndex : index;
+  item.style.setProperty("--reveal-delay", `${Math.min(delayIndex * 90, 360)}ms`);
 });
 
 if ("IntersectionObserver" in window) {

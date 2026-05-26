@@ -14,6 +14,8 @@
   --shadow: 0 24px 80px rgba(2, 8, 23, 0.42);
   --motion-speed: 1s;
   --hover-speed: 1s;
+  --scroll-progress: 0%;
+  --parallax-y: 0px;
 }
 
 :root.dark {
@@ -62,6 +64,26 @@ a {
 
 button {
   font: inherit;
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: 100%;
+  height: 3px;
+  pointer-events: none;
+  background: rgba(147, 197, 253, 0.1);
+}
+
+.scroll-progress span {
+  display: block;
+  width: var(--scroll-progress);
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #bae6fd);
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.72);
+  transition: width 120ms linear;
 }
 
 .site-header {
@@ -204,6 +226,7 @@ button {
   object-fit: cover;
   object-position: center;
   animation: heroZoom var(--motion-speed) ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .hero-scrim {
@@ -272,10 +295,12 @@ button {
 }
 
 .button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  overflow: hidden;
   min-height: 48px;
   padding: 0 18px;
   font-weight: 800;
@@ -285,6 +310,21 @@ button {
     border-color var(--hover-speed) ease,
     background var(--hover-speed) ease,
     box-shadow var(--hover-speed) ease;
+}
+
+.button::after {
+  position: absolute;
+  inset: -40% auto -40% -60%;
+  width: 42%;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: skewX(-18deg) translateX(0);
+  transition: transform var(--hover-speed) ease;
+}
+
+.button:hover::after,
+.button:focus-visible::after {
+  transform: skewX(-18deg) translateX(420%);
 }
 
 .button:hover,
@@ -316,9 +356,33 @@ button {
 }
 
 .intro-band {
+  position: relative;
+  overflow: hidden;
   padding-top: clamp(54px, 8vw, 94px);
   padding-bottom: clamp(48px, 7vw, 82px);
   background: linear-gradient(180deg, #08172b, var(--surface));
+}
+
+.intro-band::after,
+.skills-section::after,
+.contact-section::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(105deg, transparent 0 42%, rgba(56, 189, 248, 0.1) 48%, transparent 56%);
+  opacity: 0;
+  transform: translateX(-32%);
+  transition:
+    opacity var(--motion-speed) ease,
+    transform var(--motion-speed) ease;
+  pointer-events: none;
+}
+
+.intro-band.is-visible::after,
+.skills-section.is-visible::after,
+.contact-section.is-visible::after {
+  opacity: 1;
+  transform: translateX(24%);
 }
 
 .section-grid {
@@ -353,6 +417,8 @@ h2 {
 }
 
 .metric {
+  position: relative;
+  overflow: hidden;
   min-height: 205px;
   padding: clamp(24px, 4vw, 42px);
   background:
@@ -360,6 +426,28 @@ h2 {
   transition:
     transform var(--hover-speed) ease,
     background var(--hover-speed) ease;
+}
+
+.metric::after,
+.project-card::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(120deg, transparent 0 36%, rgba(125, 211, 252, 0.16) 48%, transparent 62%);
+  opacity: 0;
+  transform: translateX(-120%);
+  transition:
+    opacity var(--hover-speed) ease,
+    transform var(--hover-speed) ease;
+  pointer-events: none;
+}
+
+.metric:hover::after,
+.metric:focus-within::after,
+.project-card:hover::after,
+.project-card:focus-within::after {
+  opacity: 1;
+  transform: translateX(120%);
 }
 
 .metric:hover {
@@ -387,6 +475,8 @@ h2 {
 }
 
 .section {
+  position: relative;
+  overflow: hidden;
   padding-top: clamp(60px, 9vw, 112px);
   padding-bottom: clamp(60px, 9vw, 112px);
 }
@@ -405,6 +495,7 @@ h2 {
 }
 
 .project-card {
+  position: relative;
   overflow: hidden;
   background:
     linear-gradient(180deg, rgba(16, 42, 74, 0.92), rgba(8, 23, 43, 0.98));
@@ -489,9 +580,20 @@ h2 {
   margin-top: 22px;
   color: var(--teal-strong);
   font-weight: 800;
+  transition:
+    color var(--hover-speed) ease,
+    transform var(--hover-speed) ease;
+}
+
+.project-link:hover,
+.project-link:focus-visible {
+  color: #ffffff;
+  transform: translateX(6px);
 }
 
 .skills-section {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(180deg, var(--surface), #071426);
 }
 
@@ -523,6 +625,8 @@ h2 {
 }
 
 .contact-section {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.58fr);
   gap: clamp(28px, 6vw, 82px);
@@ -595,15 +699,42 @@ h2 {
 
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
+  filter: blur(8px);
+  transform:
+    translate3d(var(--reveal-x, 0), var(--reveal-y, 24px), 0)
+    scale(var(--reveal-scale, 1))
+    rotate(var(--reveal-rotate, 0));
   transition:
     opacity var(--motion-speed) ease var(--reveal-delay, 0ms),
+    filter var(--motion-speed) ease var(--reveal-delay, 0ms),
     transform var(--motion-speed) ease var(--reveal-delay, 0ms);
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1) rotate(0);
+}
+
+.reveal-left {
+  --reveal-x: -42px;
+  --reveal-y: 0;
+}
+
+.reveal-right {
+  --reveal-x: 42px;
+  --reveal-y: 0;
+}
+
+.reveal-zoom {
+  --reveal-y: 34px;
+  --reveal-scale: 0.94;
+}
+
+.reveal-pop {
+  --reveal-y: 18px;
+  --reveal-scale: 0.88;
+  --reveal-rotate: -1deg;
 }
 
 @keyframes headerDrop {
@@ -632,11 +763,11 @@ h2 {
 
 @keyframes heroZoom {
   from {
-    transform: scale(1);
+    transform: translateY(var(--parallax-y)) scale(1);
   }
 
   to {
-    transform: scale(1.055);
+    transform: translateY(var(--parallax-y)) scale(1.055);
   }
 }
 
@@ -672,6 +803,7 @@ h2 {
 
   .reveal {
     opacity: 1;
+    filter: none;
     transform: none;
   }
 }
