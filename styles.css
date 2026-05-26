@@ -12,7 +12,8 @@
   --blue: #93c5fd;
   --gold: #60a5fa;
   --shadow: 0 24px 80px rgba(2, 8, 23, 0.42);
-  --hover-speed: 500ms;
+  --motion-speed: 1s;
+  --hover-speed: 1s;
 }
 
 :root.dark {
@@ -79,7 +80,7 @@ button {
   background: rgba(2, 10, 24, 0.84);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(18px);
-  animation: headerDrop 600ms ease both;
+  animation: headerDrop var(--motion-speed) ease both;
 }
 
 .brand,
@@ -190,7 +191,7 @@ button {
     linear-gradient(110deg, transparent 0 34%, rgba(56, 189, 248, 0.13) 42%, transparent 50%);
   opacity: 0.7;
   transform: translateX(-8%);
-  animation: heroScan 9s ease-in-out infinite alternate;
+  animation: heroScan var(--motion-speed) ease-in-out infinite alternate;
   pointer-events: none;
 }
 
@@ -202,7 +203,7 @@ button {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  animation: heroZoom 12s ease-in-out infinite alternate;
+  animation: heroZoom var(--motion-speed) ease-in-out infinite alternate;
 }
 
 .hero-scrim {
@@ -222,19 +223,19 @@ button {
 }
 
 .hero-content .eyebrow {
-  animation: fadeUp 650ms 120ms ease both;
+  animation: fadeUp var(--motion-speed) 120ms ease both;
 }
 
 .hero h1 {
-  animation: fadeUp 720ms 220ms ease both;
+  animation: fadeUp var(--motion-speed) 220ms ease both;
 }
 
 .hero-copy {
-  animation: fadeUp 720ms 330ms ease both;
+  animation: fadeUp var(--motion-speed) 330ms ease both;
 }
 
 .hero-actions {
-  animation: fadeUp 720ms 450ms ease both;
+  animation: fadeUp var(--motion-speed) 450ms ease both;
 }
 
 .eyebrow,
@@ -431,7 +432,7 @@ h2 {
     linear-gradient(45deg, transparent 0 38%, rgba(255, 255, 255, 0.24) 38% 40%, transparent 40%),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 1px, transparent 1px 32px);
   background-size: 100% 100%, 180% 180%, auto;
-  animation: thumbShift 10s ease-in-out infinite alternate;
+  animation: thumbShift var(--motion-speed) ease-in-out infinite alternate;
 }
 
 .project-thumb::after {
@@ -596,8 +597,8 @@ h2 {
   opacity: 0;
   transform: translateY(24px);
   transition:
-    opacity 650ms ease var(--reveal-delay, 0ms),
-    transform 650ms ease var(--reveal-delay, 0ms);
+    opacity var(--motion-speed) ease var(--reveal-delay, 0ms),
+    transform var(--motion-speed) ease var(--reveal-delay, 0ms);
 }
 
 .reveal.is-visible {
