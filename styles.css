@@ -397,7 +397,7 @@ h2 {
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
   max-width: 1160px;
   margin: 0 auto;
@@ -458,6 +458,12 @@ h2 {
   background:
     linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(30, 64, 175, 0.82)),
     linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 38%);
+}
+
+.thumb-four {
+  background:
+    linear-gradient(135deg, rgba(14, 165, 233, 0.86), rgba(30, 64, 175, 0.9)),
+    repeating-linear-gradient(90deg, rgba(191, 219, 254, 0.16) 0 1px, transparent 1px 28px);
 }
 
 .project-body {
@@ -697,9 +703,12 @@ h2 {
 
   .section-grid,
   .metrics,
-  .project-grid,
   .contact-section {
     grid-template-columns: 1fr;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .metric {
@@ -758,6 +767,10 @@ h2 {
 
   .project-thumb {
     height: 176px;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
   }
 
   .site-footer {
