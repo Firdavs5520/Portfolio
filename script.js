@@ -3,6 +3,17 @@ const themeToggle = document.querySelector("#themeToggle");
 const copyEmail = document.querySelector("#copyEmail");
 const email = "sharipovfirdavs5520@gmail.com";
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const smoothScroller =
+  !reduceMotion && window.Lenis
+    ? new window.Lenis({
+        autoRaf: true,
+        duration: 1.8,
+        easing: (t) => 1 - Math.pow(1 - t, 4),
+        smoothWheel: true,
+        wheelMultiplier: 0.9,
+        touchMultiplier: 1.15
+      })
+    : null;
 
 document.querySelector("#year").textContent = new Date().getFullYear();
 
@@ -69,7 +80,37 @@ function requestScrollUpdate() {
 
 window.addEventListener("scroll", requestScrollUpdate, { passive: true });
 window.addEventListener("resize", requestScrollUpdate);
+smoothScroller?.on("scroll", requestScrollUpdate);
 updateScrollMotion();
+
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const target = link.getAttribute("href");
+
+    if (!target || target === "#") {
+      return;
+    }
+
+    const targetElement = target === "#top" ? document.body : document.querySelector(target);
+
+    if (!targetElement) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (smoothScroller) {
+      smoothScroller.scrollTo(targetElement, {
+        duration: 1.8,
+        easing: (t) => 1 - Math.pow(1 - t, 4)
+      });
+    } else {
+      targetElement.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    }
+
+    window.history.pushState(null, "", target);
+  });
+});
 
 const revealItems = document.querySelectorAll(
   ".intro-band, .section-grid > div, .section-grid > p, .metric, .section-heading, .project-card, .skill-list span, .contact-copy, .contact-link, .site-footer"
