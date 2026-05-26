@@ -12,6 +12,7 @@
   --blue: #93c5fd;
   --gold: #60a5fa;
   --shadow: 0 24px 80px rgba(2, 8, 23, 0.42);
+  --hover-speed: 500ms;
 }
 
 :root.dark {
@@ -116,7 +117,7 @@ button {
 
 .nav-links a {
   position: relative;
-  transition: color 160ms ease;
+  transition: color var(--hover-speed) ease;
 }
 
 .nav-links a:hover,
@@ -134,7 +135,7 @@ button {
   background: var(--coral);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 180ms ease;
+  transition: transform var(--hover-speed) ease;
 }
 
 .nav-links a:hover::after,
@@ -153,8 +154,8 @@ button {
   border: 1px solid rgba(147, 197, 253, 0.28);
   border-radius: 8px;
   transition:
-    transform 160ms ease,
-    background 160ms ease;
+    transform var(--hover-speed) ease,
+    background var(--hover-speed) ease;
 }
 
 .icon-button:hover,
@@ -279,10 +280,10 @@ button {
   font-weight: 800;
   border-radius: 8px;
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease,
-    box-shadow 160ms ease;
+    transform var(--hover-speed) ease,
+    border-color var(--hover-speed) ease,
+    background var(--hover-speed) ease,
+    box-shadow var(--hover-speed) ease;
 }
 
 .button:hover,
@@ -356,8 +357,8 @@ h2 {
   background:
     linear-gradient(145deg, rgba(16, 42, 74, 0.96), rgba(8, 23, 43, 0.98));
   transition:
-    transform 180ms ease,
-    background 180ms ease;
+    transform var(--hover-speed) ease,
+    background var(--hover-speed) ease;
 }
 
 .metric:hover {
@@ -411,9 +412,9 @@ h2 {
   box-shadow: var(--shadow);
   transform: translateZ(0);
   transition:
-    transform 200ms ease,
-    border-color 200ms ease,
-    box-shadow 200ms ease;
+    transform var(--hover-speed) ease,
+    border-color var(--hover-speed) ease,
+    box-shadow var(--hover-speed) ease;
 }
 
 .project-card:hover {
@@ -503,9 +504,9 @@ h2 {
   border-radius: 8px;
   font-weight: 800;
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease;
+    transform var(--hover-speed) ease,
+    border-color var(--hover-speed) ease,
+    background var(--hover-speed) ease;
 }
 
 .skill-list span:hover {
@@ -555,9 +556,9 @@ h2 {
   text-align: left;
   overflow-wrap: anywhere;
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease;
+    transform var(--hover-speed) ease,
+    border-color var(--hover-speed) ease,
+    background var(--hover-speed) ease;
 }
 
 .contact-link:hover,
