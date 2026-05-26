@@ -2,7 +2,7 @@ const root = document.documentElement;
 const themeToggle = document.querySelector("#themeToggle");
 const copyEmail = document.querySelector("#copyEmail");
 const email = "sharipovfirdavs5520@gmail.com";
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduceMotion = false;
 const smoothScroller =
   !reduceMotion && window.Lenis
     ? new window.Lenis({
@@ -134,7 +134,7 @@ revealItems.forEach((item, index) => {
   item.style.setProperty("--reveal-delay", `${Math.min(delayIndex * 90, 360)}ms`);
 });
 
-if ("IntersectionObserver" in window) {
+function startRevealAnimations() {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -144,10 +144,19 @@ if ("IntersectionObserver" in window) {
         }
       });
     },
-    { threshold: 0.16 }
+    {
+      threshold: 0.16,
+      rootMargin: "0px 0px -8% 0px"
+    }
   );
 
   revealItems.forEach((item) => observer.observe(item));
+}
+
+if ("IntersectionObserver" in window) {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(startRevealAnimations);
+  });
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
