@@ -1,33 +1,33 @@
 :root {
-  color-scheme: light;
-  --bg: #f6f7f2;
-  --surface: #ffffff;
-  --surface-strong: #edf4ee;
-  --text: #17201c;
-  --muted: #5e6a64;
-  --line: #dce5dd;
-  --teal: #0f766e;
-  --teal-strong: #0a4f49;
-  --coral: #d85a4a;
-  --blue: #315fc2;
-  --gold: #c89a28;
-  --shadow: 0 20px 60px rgba(23, 32, 28, 0.14);
+  color-scheme: dark;
+  --bg: #071426;
+  --surface: #0b1d33;
+  --surface-strong: #102a4a;
+  --text: #f3f8ff;
+  --muted: #a8bdd7;
+  --line: #1d3b62;
+  --teal: #2563eb;
+  --teal-strong: #7dd3fc;
+  --coral: #38bdf8;
+  --blue: #93c5fd;
+  --gold: #60a5fa;
+  --shadow: 0 24px 80px rgba(2, 8, 23, 0.42);
 }
 
 :root.dark {
   color-scheme: dark;
-  --bg: #101512;
-  --surface: #17201c;
-  --surface-strong: #1f2b25;
-  --text: #f4f7f2;
-  --muted: #b9c6bd;
-  --line: #33433a;
-  --teal: #5ee1d5;
-  --teal-strong: #9cf5ed;
-  --coral: #ff8c7f;
-  --blue: #88a9ff;
-  --gold: #f1c760;
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  --bg: #020817;
+  --surface: #08172b;
+  --surface-strong: #0d2340;
+  --text: #f8fbff;
+  --muted: #a9bcd6;
+  --line: #183459;
+  --teal: #1d4ed8;
+  --teal-strong: #bae6fd;
+  --coral: #67e8f9;
+  --blue: #bfdbfe;
+  --gold: #60a5fa;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -41,7 +41,8 @@ html {
 body {
   margin: 0;
   overflow-x: clip;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, #020817 0%, var(--bg) 42%, #06152a 100%);
   color: var(--text);
   font-family: "Inter", Arial, sans-serif;
   line-height: 1.6;
@@ -74,9 +75,10 @@ button {
   min-height: 72px;
   padding: 16px clamp(18px, 4vw, 56px);
   color: #ffffff;
-  background: rgba(12, 20, 17, 0.78);
+  background: rgba(2, 10, 24, 0.84);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(18px);
+  animation: headerDrop 600ms ease both;
 }
 
 .brand,
@@ -100,8 +102,9 @@ button {
   height: 36px;
   place-items: center;
   color: #ffffff;
-  background: var(--coral);
+  background: linear-gradient(135deg, #1d4ed8, #38bdf8);
   border-radius: 8px;
+  box-shadow: 0 12px 26px rgba(56, 189, 248, 0.24);
 }
 
 .nav-links {
@@ -112,12 +115,31 @@ button {
 }
 
 .nav-links a {
+  position: relative;
   transition: color 160ms ease;
 }
 
 .nav-links a:hover,
 .nav-links a:focus-visible {
   color: #ffffff;
+}
+
+.nav-links a::after {
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  left: 0;
+  height: 2px;
+  content: "";
+  background: var(--coral);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .icon-button {
@@ -127,9 +149,18 @@ button {
   place-items: center;
   color: #ffffff;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(37, 99, 235, 0.16);
+  border: 1px solid rgba(147, 197, 253, 0.28);
   border-radius: 8px;
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  background: rgba(56, 189, 248, 0.22);
+  transform: translateY(-2px);
 }
 
 .icon-button svg,
@@ -148,6 +179,20 @@ button {
   isolation: isolate;
 }
 
+.hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    repeating-linear-gradient(90deg, rgba(147, 197, 253, 0.08) 0 1px, transparent 1px 86px),
+    linear-gradient(110deg, transparent 0 34%, rgba(56, 189, 248, 0.13) 42%, transparent 50%);
+  opacity: 0.7;
+  transform: translateX(-8%);
+  animation: heroScan 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
 .hero-media {
   position: absolute;
   inset: 0;
@@ -156,6 +201,7 @@ button {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  animation: heroZoom 12s ease-in-out infinite alternate;
 }
 
 .hero-scrim {
@@ -163,8 +209,8 @@ button {
   inset: 0;
   z-index: -2;
   background:
-    linear-gradient(90deg, rgba(7, 13, 11, 0.9) 0%, rgba(7, 13, 11, 0.58) 48%, rgba(7, 13, 11, 0.2) 100%),
-    linear-gradient(0deg, rgba(16, 21, 18, 0.36), rgba(16, 21, 18, 0.04));
+    linear-gradient(90deg, rgba(2, 8, 23, 0.94) 0%, rgba(8, 24, 48, 0.68) 48%, rgba(14, 55, 112, 0.18) 100%),
+    linear-gradient(0deg, rgba(2, 8, 23, 0.42), rgba(15, 23, 42, 0.08));
 }
 
 .hero-content {
@@ -172,6 +218,22 @@ button {
   padding: clamp(132px, 18vh, 190px) 0 88px;
   margin-left: clamp(18px, 7vw, 92px);
   color: #ffffff;
+}
+
+.hero-content .eyebrow {
+  animation: fadeUp 650ms 120ms ease both;
+}
+
+.hero h1 {
+  animation: fadeUp 720ms 220ms ease both;
+}
+
+.hero-copy {
+  animation: fadeUp 720ms 330ms ease both;
+}
+
+.hero-actions {
+  animation: fadeUp 720ms 450ms ease both;
 }
 
 .eyebrow,
@@ -219,7 +281,8 @@ button {
   transition:
     transform 160ms ease,
     border-color 160ms ease,
-    background 160ms ease;
+    background 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .button:hover,
@@ -229,14 +292,15 @@ button {
 
 .button.primary {
   color: #ffffff;
-  background: var(--teal);
+  background: linear-gradient(135deg, #1d4ed8, #38bdf8);
   border: 1px solid transparent;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.28);
 }
 
 .button.secondary {
   color: #ffffff;
-  background: rgba(16, 21, 18, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(7, 20, 38, 0.68);
+  border: 1px solid rgba(147, 197, 253, 0.34);
   backdrop-filter: blur(8px);
 }
 
@@ -252,7 +316,7 @@ button {
 .intro-band {
   padding-top: clamp(54px, 8vw, 94px);
   padding-bottom: clamp(48px, 7vw, 82px);
-  background: var(--surface);
+  background: linear-gradient(180deg, #08172b, var(--surface));
 }
 
 .section-grid {
@@ -283,13 +347,23 @@ h2 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
-  background: var(--line);
+  background: rgba(147, 197, 253, 0.16);
 }
 
 .metric {
   min-height: 205px;
   padding: clamp(24px, 4vw, 42px);
-  background: var(--surface-strong);
+  background:
+    linear-gradient(145deg, rgba(16, 42, 74, 0.96), rgba(8, 23, 43, 0.98));
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.metric:hover {
+  background:
+    linear-gradient(145deg, rgba(29, 78, 216, 0.28), rgba(8, 23, 43, 0.98));
+  transform: translateY(-4px);
 }
 
 .metric span {
@@ -330,30 +404,59 @@ h2 {
 
 .project-card {
   overflow: hidden;
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(16, 42, 74, 0.92), rgba(8, 23, 43, 0.98));
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: var(--shadow);
+  transform: translateZ(0);
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.project-card:hover {
+  border-color: rgba(125, 211, 252, 0.58);
+  box-shadow: 0 28px 90px rgba(2, 8, 23, 0.55);
+  transform: translateY(-8px);
 }
 
 .project-thumb {
+  position: relative;
   height: 220px;
   background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.86), rgba(49, 95, 194, 0.72)),
-    linear-gradient(45deg, transparent 0 38%, rgba(255, 255, 255, 0.36) 38% 40%, transparent 40%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 1px, transparent 1px 32px);
+    linear-gradient(135deg, rgba(30, 64, 175, 0.92), rgba(14, 165, 233, 0.66)),
+    linear-gradient(45deg, transparent 0 38%, rgba(255, 255, 255, 0.24) 38% 40%, transparent 40%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 1px, transparent 1px 32px);
+  background-size: 100% 100%, 180% 180%, auto;
+  animation: thumbShift 10s ease-in-out infinite alternate;
+}
+
+.project-thumb::after {
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  width: 104px;
+  height: 48px;
+  content: "";
+  background:
+    linear-gradient(90deg, #bfdbfe 0 38%, transparent 38% 48%, #38bdf8 48% 100%);
+  border-radius: 8px;
+  opacity: 0.72;
+  box-shadow: 0 16px 30px rgba(2, 8, 23, 0.3);
 }
 
 .thumb-two {
   background:
-    linear-gradient(135deg, rgba(216, 90, 74, 0.86), rgba(200, 154, 40, 0.78)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.24) 0 1px, transparent 1px 32px);
+    linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(37, 99, 235, 0.82)),
+    repeating-linear-gradient(0deg, rgba(191, 219, 254, 0.18) 0 1px, transparent 1px 32px);
 }
 
 .thumb-three {
   background:
-    linear-gradient(135deg, rgba(49, 95, 194, 0.9), rgba(15, 118, 110, 0.78)),
-    radial-gradient(circle at 65% 35%, rgba(255, 255, 255, 0.42), transparent 34%);
+    linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(30, 64, 175, 0.82)),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 38%);
 }
 
 .project-body {
@@ -381,7 +484,7 @@ h2 {
 }
 
 .skills-section {
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface), #071426);
 }
 
 .skill-list {
@@ -395,10 +498,20 @@ h2 {
 .skill-list span {
   padding: 12px 15px;
   color: var(--text);
-  background: var(--surface-strong);
+  background: rgba(16, 42, 74, 0.82);
   border: 1px solid var(--line);
   border-radius: 8px;
   font-weight: 800;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.skill-list span:hover {
+  background: rgba(37, 99, 235, 0.28);
+  border-color: rgba(125, 211, 252, 0.54);
+  transform: translateY(-3px);
 }
 
 .contact-section {
@@ -407,6 +520,9 @@ h2 {
   gap: clamp(28px, 6vw, 82px);
   padding-top: clamp(60px, 9vw, 110px);
   padding-bottom: clamp(60px, 9vw, 110px);
+  background:
+    linear-gradient(135deg, rgba(2, 8, 23, 0.98), rgba(14, 55, 112, 0.72)),
+    repeating-linear-gradient(90deg, rgba(147, 197, 253, 0.08) 0 1px, transparent 1px 76px);
 }
 
 .contact-copy {
@@ -428,14 +544,27 @@ h2 {
   align-items: center;
   gap: 12px;
   min-height: 58px;
+  min-width: 0;
   padding: 0 16px;
   color: var(--text);
   cursor: pointer;
-  background: var(--surface);
+  background: rgba(11, 29, 51, 0.9);
   border: 1px solid var(--line);
   border-radius: 8px;
   font-weight: 800;
   text-align: left;
+  overflow-wrap: anywhere;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.contact-link:hover,
+.contact-link:focus-visible {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: rgba(125, 211, 252, 0.54);
+  transform: translateX(6px);
 }
 
 .contact-link svg {
@@ -447,13 +576,96 @@ h2 {
   gap: 18px;
   padding: 28px clamp(18px, 5vw, 72px);
   color: var(--muted);
-  background: var(--surface);
+  background: #06101f;
   border-top: 1px solid var(--line);
 }
 
 .site-footer a {
   color: var(--teal-strong);
   font-weight: 800;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 650ms ease var(--reveal-delay, 0ms),
+    transform 650ms ease var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes headerDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.055);
+  }
+}
+
+@keyframes heroScan {
+  from {
+    transform: translateX(-12%);
+  }
+
+  to {
+    transform: translateX(8%);
+  }
+}
+
+@keyframes thumbShift {
+  from {
+    background-position: center, 0% 50%, center;
+  }
+
+  to {
+    background-position: center, 100% 50%, center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (max-width: 920px) {
@@ -479,7 +691,7 @@ h2 {
   }
 
   .hero-scrim {
-    background: linear-gradient(90deg, rgba(7, 13, 11, 0.92), rgba(7, 13, 11, 0.58));
+    background: linear-gradient(90deg, rgba(2, 8, 23, 0.94), rgba(8, 24, 48, 0.66));
   }
 
   .section-grid,
@@ -540,7 +752,7 @@ h2 {
   }
 
   .button.secondary {
-    background: rgba(16, 21, 18, 0.82);
+    background: rgba(2, 8, 23, 0.86);
   }
 
   .project-thumb {

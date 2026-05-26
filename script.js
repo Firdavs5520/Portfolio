@@ -1,7 +1,7 @@
 const root = document.documentElement;
 const themeToggle = document.querySelector("#themeToggle");
 const copyEmail = document.querySelector("#copyEmail");
-const email = "firdavs@example.com";
+const email = "sharipovfirdavs5520@gmail.com";
 
 document.querySelector("#year").textContent = new Date().getFullYear();
 
@@ -29,7 +29,7 @@ copyEmail.addEventListener("click", async () => {
     await navigator.clipboard.writeText(email);
     copyEmail.innerHTML = '<i data-lucide="check" aria-hidden="true"></i>Email nusxalandi';
   } catch {
-    copyEmail.innerHTML = '<i data-lucide="mail" aria-hidden="true"></i>firdavs@example.com';
+    copyEmail.innerHTML = '<i data-lucide="mail" aria-hidden="true"></i>sharipovfirdavs5520@gmail.com';
   }
 
   if (window.lucide) {
@@ -43,5 +43,32 @@ copyEmail.addEventListener("click", async () => {
     }
   }, 2200);
 });
+
+const revealItems = document.querySelectorAll(
+  ".intro-band, .metric, .section-heading, .project-card, .skill-list span, .contact-copy, .contact-link"
+);
+
+revealItems.forEach((item, index) => {
+  item.classList.add("reveal");
+  item.style.setProperty("--reveal-delay", `${Math.min(index * 45, 260)}ms`);
+});
+
+if ("IntersectionObserver" in window) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.16 }
+  );
+
+  revealItems.forEach((item) => observer.observe(item));
+} else {
+  revealItems.forEach((item) => item.classList.add("is-visible"));
+}
 
 updateThemeIcon();

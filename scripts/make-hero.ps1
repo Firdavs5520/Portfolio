@@ -36,7 +36,7 @@ function Fill-RoundedRectangle($g, $brush, $x, $y, $w, $h, $r) {
 }
 
 $bgRect = New-Object System.Drawing.Rectangle 0, 0, $width, $height
-$bg = New-Object System.Drawing.Drawing2D.LinearGradientBrush $bgRect, ([System.Drawing.Color]::FromArgb(23,32,28)), ([System.Drawing.Color]::FromArgb(49,95,194)), 35
+$bg = New-Object System.Drawing.Drawing2D.LinearGradientBrush $bgRect, ([System.Drawing.ColorTranslator]::FromHtml("#020817")), ([System.Drawing.ColorTranslator]::FromHtml("#0b3a7a")), 35
 $graphics.FillRectangle($bg, $bgRect)
 
 $meshPen = New-Object System.Drawing.Pen ([System.Drawing.Color]::FromArgb(34, 255, 255, 255)), 1
@@ -47,13 +47,13 @@ for ($y = 70; $y -lt $height; $y += 92) {
   $graphics.DrawLine($meshPen, 0, $y, $width, $y - 180)
 }
 
-$teal = Brush "#0f766e"
-$coral = Brush "#d85a4a"
-$gold = Brush "#c89a28"
-$paper = Brush "#f6f7f2"
-$ink = Brush "#17201c"
-$soft = Brush "#dfe9e2"
-$blue = Brush "#315fc2"
+$teal = Brush "#2563eb"
+$coral = Brush "#38bdf8"
+$gold = Brush "#93c5fd"
+$paper = Brush "#dbeafe"
+$ink = Brush "#06111f"
+$soft = Brush "#b8d6ff"
+$blue = Brush "#0f2f66"
 $white70 = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(178, 255, 255, 255))
 $white25 = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(64, 255, 255, 255))
 $shadow = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(70, 0, 0, 0))
@@ -77,15 +77,15 @@ $graphics.DrawString("Portfolio", $fontMedium, $ink, 1250, 326)
 $graphics.DrawString("UI / Frontend", $fontSmall, $ink, 1252, 618)
 
 Fill-RoundedRectangle $graphics $shadow 720 502 530 300 22
-Fill-RoundedRectangle $graphics (Brush "#101512") 690 468 530 300 22
-Fill-RoundedRectangle $graphics (Brush "#24342d") 730 510 450 190 14
+Fill-RoundedRectangle $graphics (Brush "#020817") 690 468 530 300 22
+Fill-RoundedRectangle $graphics (Brush "#0b1d33") 730 510 450 190 14
 Fill-RoundedRectangle $graphics $teal 768 548 130 18 7
 Fill-RoundedRectangle $graphics $coral 768 592 230 18 7
 Fill-RoundedRectangle $graphics $gold 768 636 170 18 7
 Fill-RoundedRectangle $graphics $white25 1030 548 104 104 16
 Fill-RoundedRectangle $graphics $white25 1030 668 104 32 10
 
-$desk = New-Object System.Drawing.Drawing2D.LinearGradientBrush (New-Object System.Drawing.Rectangle 620, 768, 680, 100), ([System.Drawing.ColorTranslator]::FromHtml("#d85a4a")), ([System.Drawing.ColorTranslator]::FromHtml("#c89a28")), 0
+$desk = New-Object System.Drawing.Drawing2D.LinearGradientBrush (New-Object System.Drawing.Rectangle 620, 768, 680, 100), ([System.Drawing.ColorTranslator]::FromHtml("#1d4ed8")), ([System.Drawing.ColorTranslator]::FromHtml("#38bdf8")), 0
 Fill-RoundedRectangle $graphics $desk 620 768 680 100 18
 
 Fill-RoundedRectangle $graphics $white70 1340 760 180 72 16
