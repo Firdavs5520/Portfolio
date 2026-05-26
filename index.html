@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firdavs | Portfolio</title>
+    <meta
+      name="description"
+      content="Firdavs uchun zamonaviy, responsiv shaxsiy portfolio sahifasi."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Firdavs portfolio bosh sahifa">
+        <span class="brand-mark">F</span>
+        <span>Firdavs</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Asosiy bo'limlar">
+        <a href="#about">Men haqimda</a>
+        <a href="#work">Loyihalar</a>
+        <a href="#skills">Ko'nikmalar</a>
+        <a href="#contact">Aloqa</a>
+      </nav>
+
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Rang rejimini almashtirish">
+        <i data-lucide="sun" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="Portfolio kirish qismi">
+        <img class="hero-media" src="assets/portfolio-hero.png" alt="" />
+        <div class="hero-scrim"></div>
+        <div class="hero-content">
+          <p class="eyebrow">Frontend developer</p>
+          <h1>Firdavs</h1>
+          <p class="hero-copy">
+            Tezkor, chiroyli va foydalanuvchiga qulay web-interfeyslar yarataman.
+            Har bir sahifada toza kod, aniq dizayn va real natijaga e'tibor beraman.
+          </p>
+          <div class="hero-actions" aria-label="Asosiy harakatlar">
+            <a class="button primary" href="#work">
+              <i data-lucide="layout-grid" aria-hidden="true"></i>
+              Loyihalarni ko'rish
+            </a>
+            <a class="button secondary" href="#contact">
+              <i data-lucide="send" aria-hidden="true"></i>
+              Bog'lanish
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro-band" id="about">
+        <div class="section-grid">
+          <div>
+            <p class="section-kicker">Men haqimda</p>
+            <h2>G'oyani ishlaydigan, chiroyli va ishonchli web tajribaga aylantirish.</h2>
+          </div>
+          <p>
+            Men biznes maqsadini tushunib, foydalanuvchi uchun sodda va yoqimli
+            interfeyslar qurishga qiziqaman. Landing page, portfolio, dashboard va
+            kichik web ilovalar uchun puxta tuzilgan frontend yechimlar tayyorlayman.
+          </p>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Portfolio yo'nalishlari">
+        <div class="metric">
+          <span>01</span>
+          <strong>Responsiv dizayn</strong>
+          <p>Telefon, planshet va desktopda tartibli ko'rinadigan sahifalar.</p>
+        </div>
+        <div class="metric">
+          <span>02</span>
+          <strong>Toza frontend</strong>
+          <p>HTML, CSS va JavaScript bilan tez yuklanadigan interfeyslar.</p>
+        </div>
+        <div class="metric">
+          <span>03</span>
+          <strong>Amaliy yondashuv</strong>
+          <p>Dizayn faqat chiroyli emas, foydalanuvchi vazifasini ham yengillashtiradi.</p>
+        </div>
+      </section>
+
+      <section class="section" id="work">
+        <div class="section-heading">
+          <p class="section-kicker">Tanlangan ishlar</p>
+          <h2>Loyihalar</h2>
+        </div>
+
+        <div class="project-grid">
+          <article class="project-card">
+            <div class="project-thumb thumb-one" aria-hidden="true"></div>
+            <div class="project-body">
+              <p class="project-type">Landing page</p>
+              <h3>Startap uchun taqdimot sahifasi</h3>
+              <p>
+                Mahsulot qiymatini tez tushuntiradigan, CTA va xizmat bloklari aniq
+                joylashgan responsiv sahifa.
+              </p>
+              <a href="#contact" class="project-link">
+                Shunga o'xshash loyiha
+                <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-thumb thumb-two" aria-hidden="true"></div>
+            <div class="project-body">
+              <p class="project-type">Dashboard</p>
+              <h3>Analitika paneli konsepti</h3>
+              <p>
+                Jadval, filtr, statistika va grafiklar bilan kundalik ishlashga qulay
+                boshqaruv ekrani.
+              </p>
+              <a href="#contact" class="project-link">
+                Shunga o'xshash loyiha
+                <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-thumb thumb-three" aria-hidden="true"></div>
+            <div class="project-body">
+              <p class="project-type">Portfolio</p>
+              <h3>Shaxsiy brend sahifasi</h3>
+              <p>
+                Mutaxassislik, ish namunalari va kontaktlarni bitta ixcham, ishonchli
+                sahifada ko'rsatadigan dizayn.
+              </p>
+              <a href="#contact" class="project-link">
+                Shunga o'xshash loyiha
+                <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section skills-section" id="skills">
+        <div class="section-heading">
+          <p class="section-kicker">Texnologiyalar</p>
+          <h2>Ishlaydigan stack</h2>
+        </div>
+
+        <div class="skill-list" aria-label="Ko'nikmalar ro'yxati">
+          <span>HTML5</span>
+          <span>CSS3</span>
+          <span>JavaScript</span>
+          <span>Responsive UI</span>
+          <span>Git</span>
+          <span>Figma</span>
+          <span>SEO asoslari</span>
+          <span>Performance</span>
+        </div>
+      </section>
+
+      <section class="contact-section" id="contact">
+        <div class="contact-copy">
+          <p class="section-kicker">Aloqa</p>
+          <h2>Keling, keyingi loyihani birga boshlaymiz.</h2>
+          <p>
+            Portfolio, landing page yoki web ilova kerak bo'lsa, qisqa xabar qoldiring.
+            Men vazifani aniqlab, eng sodda va samarali yechimni taklif qilaman.
+          </p>
+        </div>
+
+        <div class="contact-actions" aria-label="Kontaktlar">
+          <a class="contact-link" href="mailto:firdavs@example.com">
+            <i data-lucide="mail" aria-hidden="true"></i>
+            firdavs@example.com
+          </a>
+          <a class="contact-link" href="https://t.me/firdavs_dev">
+            <i data-lucide="message-circle" aria-hidden="true"></i>
+            @firdavs_dev
+          </a>
+          <button class="contact-link" id="copyEmail" type="button">
+            <i data-lucide="copy" aria-hidden="true"></i>
+            Emailni nusxalash
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>© <span id="year"></span> Firdavs. Barcha huquqlar himoyalangan.</span>
+      <a href="#top">Yuqoriga</a>
+    </footer>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+
+# Temporary browser profiles created during local previews.
+artifacts/chrome-profile-*/
+
+# Editor and OS noise.
+.vscode/
+*.log
