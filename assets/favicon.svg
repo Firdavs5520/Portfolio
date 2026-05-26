@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Firdavs portfolio favicon">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020817"/>
+      <stop offset="0.48" stop-color="#0d2340"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="14" y1="10" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.4" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.22 0 0 0 0 0.74 0 0 0 0 0.97 0 0 0 .7 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <path d="M2 44C17 43 28 51 40 60H14C7.4 60 4 56.6 4 50Z" fill="#38bdf8" opacity=".13"/>
+  <path d="M12 14H52V50H12Z" fill="none" stroke="#38bdf8" stroke-opacity=".12"/>
+  <path d="M20 16H47V24H30V30H43V38H30V49H20Z" fill="#f8fbff" filter="url(#glow)"/>
+  <path d="M44 16H50V22H44Z" fill="url(#edge)"/>
+  <path d="M42 42H50V50H42Z" fill="#38bdf8" opacity=".85"/>
+  <path d="M12 11H24" stroke="url(#edge)" stroke-width="3" stroke-linecap="round"/>
+</svg>
