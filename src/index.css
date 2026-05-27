@@ -73,7 +73,8 @@
 
 @layer components {
   .glass-panel {
-    @apply border border-sky-500/15 bg-white/[0.76] shadow-glow backdrop-blur-2xl transition-all duration-1000 ease-out dark:border-white/10 dark:bg-slate-900/[0.72] dark:shadow-deep;
+    @apply border border-sky-500/15 bg-white/[0.76] shadow-glow backdrop-blur-2xl duration-1000 ease-out dark:border-white/10 dark:bg-slate-900/[0.72] dark:shadow-deep;
+    transition-property: transform, box-shadow, border-color, background-color, color, opacity;
   }
 
   .section-shell {

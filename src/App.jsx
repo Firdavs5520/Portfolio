@@ -1,5 +1,4 @@
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import Lenis from "lenis";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import {
@@ -30,9 +29,7 @@ import heroImage from "../assets/portfolio-hero.png";
 import medlineImage from "../assets/project-sampi-medline.png";
 import gilamImage from "../assets/project-gilam-yuvish.png";
 import vercelImage from "../assets/project-sampi-vercel.png";
-
-const HeroScene = React.lazy(() => import("./components/HeroScene.jsx"));
-const MotionAccent = React.lazy(() => import("./components/MotionAccent.jsx"));
+import { ContactAccent, HeroAccent } from "./components/PremiumAccent.jsx";
 
 const navItems = [
   { href: "#about", label: "Men haqimda" },
@@ -143,6 +140,10 @@ const stagger = {
   }
 };
 
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
 function useTheme() {
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
   const [switching, setSwitching] = useState(false);
@@ -185,7 +186,6 @@ function useTheme() {
 function App() {
   const { theme, switching, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [canShowPremiumMotion, setCanShowPremiumMotion] = useState(false);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 24, restDelta: 0.001 });
   const heroY = useTransform(scrollYProgress, [0, 0.35], [0, 90]);
@@ -208,94 +208,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
-    const update = () => setCanShowPremiumMotion(media.matches);
-
-    update();
-    media.addEventListener("change", update);
-
-    return () => media.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    let ctx;
-    let isMounted = true;
-
-    Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([gsapModule, scrollTriggerModule]) => {
-      if (!isMounted) {
-        return;
-      }
-
-      const gsap = gsapModule.gsap;
-      const ScrollTrigger = scrollTriggerModule.ScrollTrigger;
-
-      gsap.registerPlugin(ScrollTrigger);
-      ctx = gsap.context(() => {
-      gsap.utils.toArray("[data-gsap='reveal']").forEach((element) => {
-        gsap.fromTo(
-          element,
-          { autoAlpha: 0, y: 54, filter: "blur(12px)" },
-          {
-            autoAlpha: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 1.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: element,
-              start: "top 82%",
-              once: true
-            }
-          }
-        );
-      });
-
-        gsap.to("[data-gsap='hero-orbit']", {
-          yPercent: -10,
-          scale: 1.04,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#top",
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.75
-          }
-        });
-
-        gsap.to("[data-gsap='nav-shell']", {
-          backgroundColor: "rgba(2, 8, 23, 0.92)",
-          backdropFilter: "blur(24px)",
-          scrollTrigger: {
-            trigger: "#top",
-            start: "120px top",
-            toggleActions: "play none none reverse"
-          }
-        });
-      });
-    });
-
-    return () => {
-      isMounted = false;
-      ctx?.revert();
-    };
-  }, []);
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.8,
-      easing: (t) => 1 - Math.pow(1 - t, 4),
-      smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.12
-    });
-
     let frameId;
-    const raf = (time) => {
-      lenis.raf(time);
-      frameId = requestAnimationFrame(raf);
-    };
-
-    frameId = requestAnimationFrame(raf);
+    const cancelScroll = () => cancelAnimationFrame(frameId);
 
     const clickHandler = (event) => {
       const link = event.target.closest('a[href^="#"]');
@@ -312,17 +226,46 @@ function App() {
       }
 
       event.preventDefault();
-      lenis.scrollTo(targetElement, { duration: 1.8 });
+      cancelAnimationFrame(frameId);
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const startY = window.scrollY;
+      const offset = target === "#top" ? 0 : 88;
+      const endY = target === "#top" ? 0 : Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - offset);
+
+      if (prefersReducedMotion) {
+        window.scrollTo({ top: endY });
+      } else {
+        const startTime = performance.now();
+        const duration = 920;
+
+        const step = (time) => {
+          const progressValue = Math.min((time - startTime) / duration, 1);
+          const y = startY + (endY - startY) * easeOutCubic(progressValue);
+
+          window.scrollTo(0, y);
+
+          if (progressValue < 1) {
+            frameId = requestAnimationFrame(step);
+          }
+        };
+
+        frameId = requestAnimationFrame(step);
+      }
+
       setMenuOpen(false);
       window.history.pushState(null, "", target);
     };
 
     document.addEventListener("click", clickHandler);
+    window.addEventListener("wheel", cancelScroll, { passive: true });
+    window.addEventListener("touchstart", cancelScroll, { passive: true });
 
     return () => {
       cancelAnimationFrame(frameId);
       document.removeEventListener("click", clickHandler);
-      lenis.destroy();
+      window.removeEventListener("wheel", cancelScroll);
+      window.removeEventListener("touchstart", cancelScroll);
     };
   }, []);
 
@@ -368,11 +311,7 @@ function App() {
             decoding="async"
             draggable="false"
           />
-          {canShowPremiumMotion && (
-            <Suspense fallback={null}>
-              <HeroScene />
-            </Suspense>
-          )}
+          <HeroAccent />
           <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(248,251,255,0.98)_0%,rgba(239,246,255,0.84)_46%,rgba(37,99,235,0.10)_100%)] transition duration-1000 dark:bg-[linear-gradient(90deg,rgba(2,8,23,0.95)_0%,rgba(8,24,48,0.72)_48%,rgba(14,55,112,0.20)_100%)]" />
           <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(90deg,rgba(37,99,235,0.08)_0_1px,transparent_1px_86px)] opacity-80 dark:bg-[repeating-linear-gradient(90deg,rgba(147,197,253,0.08)_0_1px,transparent_1px_86px)]" />
 
@@ -393,32 +332,32 @@ function App() {
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              className="mt-7 max-w-[min(42rem,calc(100vw-2rem))] break-words text-base font-semibold leading-7 text-slate-700 transition duration-1000 dark:text-white/[0.84] sm:text-xl sm:leading-8"
+              className="mt-7 max-w-[20rem] break-words text-base font-semibold leading-7 text-slate-700 transition duration-1000 dark:text-white/[0.84] sm:max-w-2xl sm:text-xl sm:leading-8"
             >
               Men tez yuklanadigan, mobilga mos va ko'zga yoqimli web-saytlar
               yarataman. Har bir ishda foydalanuvchi uchun qulaylik, toza kod va
               real natijaga e'tibor beraman.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="mt-8 flex flex-col gap-3 min-[440px]:flex-row min-[440px]:flex-wrap">
+            <motion.div variants={fadeUp} className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <a
                 href="#work"
-                className="group inline-flex min-h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-sky-400 px-5 font-extrabold text-white shadow-glow transition duration-1000 hover:-translate-y-1 min-[440px]:w-auto"
+                className="group inline-flex min-h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-sky-400 px-5 font-extrabold text-white shadow-glow transition duration-1000 hover:-translate-y-1 sm:w-auto"
               >
                 <BriefcaseBusiness size={18} />
                 Loyihalarni ko'rish
-                <span className="absolute h-20 w-16 bg-white/30 blur-sm motion-safe:animate-shine" />
+                <span className="absolute h-20 w-16 -translate-x-28 skew-x-[-18deg] bg-white/30 blur-sm transition duration-1000 group-hover:translate-x-36" />
               </a>
               <a
                 href="#contact"
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-blue-500/25 bg-white/70 px-5 font-extrabold text-slate-900 backdrop-blur-xl transition duration-1000 hover:-translate-y-1 hover:bg-sky-100/80 dark:border-cyan-200/25 dark:bg-slate-950/[0.62] dark:text-white dark:hover:bg-slate-800 min-[440px]:w-auto"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-blue-500/25 bg-white/70 px-5 font-extrabold text-slate-900 backdrop-blur-xl transition duration-1000 hover:-translate-y-1 hover:bg-sky-100/80 dark:border-cyan-200/25 dark:bg-slate-950/[0.62] dark:text-white dark:hover:bg-slate-800 sm:w-auto"
               >
                 <Send size={18} />
                 Bog'lanish
               </a>
 
-              <div className="glass-panel flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-3 min-[440px]:w-auto">
-                {socialCards.map(({ label, href, Icon, color, ring }, index) => (
+              <div className="glass-panel flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-3 sm:w-auto">
+                {socialCards.map(({ label, href, Icon, color, ring }) => (
                   <motion.a
                     key={label}
                     href={href}
@@ -432,13 +371,9 @@ function App() {
                       <Tooltip.Trigger asChild>
                         <span className="grid h-full w-full place-items-center">
                           <span className={`absolute inset-0 bg-gradient-to-br ${ring} opacity-0 transition duration-1000 group-hover:opacity-100`} />
-                          <motion.span
-                            className={`relative text-2xl ${color}`}
-                            animate={{ y: [0, -5, 0], rotate: [0, index ? -4 : 4, 0] }}
-                            transition={{ duration: 3.6 + index * 0.2, repeat: Infinity, ease: "easeInOut" }}
-                          >
+                          <span className={`relative text-2xl ${color}`}>
                             <Icon />
-                          </motion.span>
+                          </span>
                         </span>
                       </Tooltip.Trigger>
                       <Tooltip.Portal>
@@ -476,16 +411,12 @@ function App() {
 
 function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
   return (
-    <header data-gsap="nav-shell" className="fixed inset-x-0 top-0 z-50 border-b border-sky-500/15 bg-white/[0.82] px-3 py-3 shadow-[0_18px_52px_rgba(37,99,235,0.08)] backdrop-blur-2xl transition duration-1000 dark:border-white/10 dark:bg-slate-950/[0.78] dark:shadow-none sm:px-8">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-sky-500/15 bg-white/[0.82] px-3 py-3 shadow-[0_18px_52px_rgba(37,99,235,0.08)] backdrop-blur-2xl transition duration-1000 dark:border-white/10 dark:bg-slate-950/[0.78] dark:shadow-none sm:px-8">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
         <a href="#top" className="group flex min-w-0 items-center gap-3 font-extrabold">
-          <motion.span
-            className="grid h-11 w-11 place-items-center rounded-lg bg-gradient-to-br from-blue-700 to-sky-400 text-lg text-white shadow-glow"
-            animate={{ rotate: [0, 2.5, -2.5, 0], y: [0, -2, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <span className="grid h-11 w-11 place-items-center rounded-lg bg-gradient-to-br from-blue-700 to-sky-400 text-lg text-white shadow-glow transition duration-1000 group-hover:-translate-y-1 group-hover:rotate-3">
             F
-          </motion.span>
+          </span>
           <span className="truncate text-lg text-slate-950 dark:text-white max-[340px]:hidden">Firdavs</span>
         </a>
 
@@ -559,7 +490,7 @@ function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
 
 function AboutSection() {
   return (
-    <section id="about" data-gsap="reveal" className="bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
+    <section id="about" className="bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
       <motion.div
         className="section-shell grid gap-9 lg:grid-cols-[0.95fr_0.82fr] lg:items-start"
         variants={stagger}
@@ -612,7 +543,7 @@ function AboutSection() {
 
 function ProjectsSection() {
   return (
-    <section id="work" data-gsap="reveal" className="py-16 sm:py-24">
+    <section id="work" className="py-16 sm:py-24">
       <motion.div
         className="section-shell"
         variants={stagger}
@@ -626,7 +557,7 @@ function ProjectsSection() {
         </motion.div>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.article
               key={project.title}
               variants={fadeUp}
@@ -635,24 +566,18 @@ function ProjectsSection() {
               className="glass-panel group overflow-hidden rounded-lg"
             >
               <div className="relative h-56 overflow-hidden bg-slate-900">
-                <motion.img
+                <img
                   src={project.image}
                   alt=""
                   className="h-full w-full object-cover opacity-90 transition duration-1000 group-hover:scale-110"
-                  animate={{ y: [0, index % 2 ? -8 : 8, 0] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
                   loading="lazy"
                   decoding="async"
                   draggable="false"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-sky-500/[0.12]" />
-                <motion.div
-                  className="absolute bottom-5 right-5 grid h-14 w-24 place-items-center rounded-lg border border-white/[0.18] bg-white/15 text-white backdrop-blur-md"
-                  animate={{ rotate: [0, 2, -2, 0], y: [0, -6, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, delay: index * 0.2 }}
-                >
+                <div className="absolute bottom-5 right-5 grid h-14 w-24 place-items-center rounded-lg border border-white/[0.18] bg-white/15 text-white backdrop-blur-md transition duration-1000 group-hover:-translate-y-1 group-hover:rotate-2">
                   <Rocket size={24} />
-                </motion.div>
+                </div>
               </div>
               <div className="p-6">
                 <p className="kicker">{project.type}</p>
@@ -678,7 +603,7 @@ function ProjectsSection() {
 
 function SkillsSection() {
   return (
-    <section id="skills" data-gsap="reveal" className="relative overflow-hidden bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
+    <section id="skills" className="relative overflow-hidden bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,rgba(37,99,235,0.07)_0_1px,transparent_1px_76px)] dark:bg-[repeating-linear-gradient(90deg,rgba(147,197,253,0.07)_0_1px,transparent_1px_76px)]" />
       <motion.div
         className="section-shell relative"
@@ -693,7 +618,7 @@ function SkillsSection() {
         </motion.div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {skills.map(({ name, Icon, color }, index) => (
+          {skills.map(({ name, Icon, color }) => (
             <motion.div
               key={name}
               variants={fadeUp}
@@ -701,16 +626,12 @@ function SkillsSection() {
               className="glass-panel group relative overflow-hidden rounded-lg p-5"
             >
               <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-sky-300/[0.18] to-transparent transition duration-1000 group-hover:translate-x-full" />
-              <motion.div
-                className={`relative grid h-14 w-14 place-items-center rounded-lg bg-sky-100 text-3xl shadow-glow transition duration-1000 dark:bg-slate-950 ${color}`}
-                animate={{ y: [0, -7, 0], rotate: [0, 3, -3, 0] }}
-                transition={{ duration: 3.8 + index * 0.08, repeat: Infinity, ease: "easeInOut", delay: index * 0.12 }}
-              >
+              <div className={`relative grid h-14 w-14 place-items-center rounded-lg bg-sky-100 text-3xl shadow-glow transition duration-1000 group-hover:-translate-y-1 group-hover:rotate-3 dark:bg-slate-950 ${color}`}>
                 <Icon size={name === "Responsive UI" ? 28 : undefined} />
-              </motion.div>
+              </div>
               <p className="relative mt-5 text-lg font-extrabold">{name}</p>
               <div className="relative mt-4 h-1 overflow-hidden rounded-full bg-sky-500/[0.12]">
-                <span className="block h-full origin-left rounded-full bg-gradient-to-r from-blue-700 to-cyan-300 motion-safe:animate-pulseLine" />
+                <span className="block h-full origin-left scale-x-90 rounded-full bg-gradient-to-r from-blue-700 to-cyan-300 transition duration-1000 group-hover:scale-x-100" />
               </div>
             </motion.div>
           ))}
@@ -722,7 +643,7 @@ function SkillsSection() {
 
 function ContactSection() {
   return (
-    <section id="contact" data-gsap="reveal" className="relative overflow-hidden py-16 sm:py-24">
+    <section id="contact" className="relative overflow-hidden py-16 sm:py-24">
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(248,251,255,0.96),rgba(191,219,254,0.68))] transition duration-1000 dark:bg-[linear-gradient(135deg,rgba(2,8,23,0.98),rgba(14,55,112,0.72))]" />
       <motion.div
         className="section-shell relative grid gap-10 lg:grid-cols-[0.95fr_0.62fr] lg:items-start"
@@ -740,7 +661,7 @@ function ContactSection() {
             Portfolio, landing page yoki web ilova kerak bo'lsa, men bilan bog'lanish
             mumkin. Vazifani tushunib, kerakli yechimni aniq va tartibli qilib chiqaraman.
           </p>
-          <MotionAccentGate />
+          <ContactAccent />
         </motion.div>
 
         <motion.div variants={stagger} className="grid gap-3">
@@ -755,13 +676,9 @@ function ContactSection() {
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="glass-panel group flex min-h-16 items-center gap-4 overflow-hidden rounded-lg p-4 font-extrabold"
             >
-              <motion.span
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-sky-100 text-blue-700 shadow-glow transition duration-1000 group-hover:bg-white dark:bg-slate-950 dark:text-cyan-300"
-                animate={{ y: [0, -4, 0], rotate: [0, 3, -3, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-sky-100 text-blue-700 shadow-glow transition duration-1000 group-hover:-translate-y-1 group-hover:bg-white dark:bg-slate-950 dark:text-cyan-300">
                 <Icon size={20} />
-              </motion.span>
+              </span>
               <span className="min-w-0">
                 <span className="block text-xs uppercase tracking-[0.18em] text-sky-500 dark:text-cyan-300">{label}</span>
                 <span className="block break-all text-sm sm:text-base">{value}</span>
@@ -771,41 +688,6 @@ function ContactSection() {
         </motion.div>
       </motion.div>
     </section>
-  );
-}
-
-function MotionAccentGate() {
-  const gateRef = useRef(null);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    if (isReady || !gateRef.current) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsReady(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "180px 0px" }
-    );
-
-    observer.observe(gateRef.current);
-
-    return () => observer.disconnect();
-  }, [isReady]);
-
-  return (
-    <div ref={gateRef} className="min-h-0">
-      {isReady && (
-        <Suspense fallback={null}>
-          <MotionAccent />
-        </Suspense>
-      )}
-    </div>
   );
 }
 
