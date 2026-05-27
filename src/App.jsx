@@ -4,10 +4,8 @@ import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "fra
 import {
   ArrowUpRight,
   BriefcaseBusiness,
-  Github,
   Mail,
   Menu,
-  MessageCircle,
   MonitorSmartphone,
   Moon,
   Phone,
@@ -21,6 +19,7 @@ import {
   SiGithub,
   SiJavascript,
   SiReact,
+  SiTelegram,
   SiTailwindcss,
   SiVercel,
   SiVite
@@ -87,7 +86,7 @@ const contacts = [
     label: "Telegram",
     value: "@Firdavs_5520",
     href: "https://t.me/Firdavs_5520",
-    Icon: MessageCircle
+    Icon: SiTelegram
   },
   {
     label: "Telefon",
@@ -97,9 +96,33 @@ const contacts = [
   },
   {
     label: "GitHub",
-    value: "@Firdavs5520",
+    value: "GitHub profil",
     href: "https://github.com/Firdavs5520",
-    Icon: Github
+    Icon: SiGithub
+  }
+];
+
+const socialCards = [
+  {
+    label: "GitHub",
+    href: "https://github.com/Firdavs5520",
+    Icon: SiGithub,
+    color: "text-slate-900 dark:text-white",
+    ring: "from-slate-500/20 to-sky-400/20"
+  },
+  {
+    label: "Telegram",
+    href: "https://t.me/Firdavs_5520",
+    Icon: SiTelegram,
+    color: "text-sky-500",
+    ring: "from-sky-500/20 to-cyan-300/20"
+  },
+  {
+    label: "Aloqa",
+    href: "#contact",
+    Icon: Send,
+    color: "text-cyan-400",
+    ring: "from-blue-600/20 to-cyan-300/20"
   }
 ];
 
@@ -301,17 +324,33 @@ function App() {
 
             <motion.div
               variants={fadeUp}
-              className="mt-10 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3"
+              className="mt-10 grid max-w-3xl grid-cols-3 gap-3"
             >
-              {[
-                ["GitHub", "@Firdavs5520"],
-                ["Telegram", "@Firdavs_5520"],
-                ["Status", "Open to work"]
-              ].map(([label, value]) => (
-                <div key={label} className="glass-panel rounded-lg p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-500 dark:text-cyan-300">{label}</p>
-                  <p className="mt-2 text-sm font-extrabold sm:text-base">{value}</p>
-                </div>
+              {socialCards.map(({ label, href, Icon, color, ring }, index) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noreferrer" : undefined}
+                  className="glass-panel group relative grid min-h-28 place-items-center overflow-hidden rounded-lg p-3 text-center sm:min-h-24 sm:p-4"
+                  whileHover={{ y: -8, scale: 1.025 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                  aria-label={label}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${ring} opacity-0 transition duration-1000 group-hover:opacity-100`} />
+                  <div className="absolute inset-x-5 top-3 h-px origin-left bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent motion-safe:animate-pulseLine" />
+                  <motion.span
+                    className={`relative grid h-14 w-14 place-items-center rounded-2xl border border-sky-300/20 bg-white/70 text-3xl shadow-glow backdrop-blur-xl transition duration-1000 dark:bg-slate-950/70 ${color}`}
+                    animate={{ y: [0, -7, 0], rotate: [0, index % 2 ? -4 : 4, 0] }}
+                    transition={{ duration: 3.8 + index * 0.18, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Icon size={label === "Aloqa" ? 28 : undefined} />
+                  </motion.span>
+                  <span className="relative mt-2 text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-sky-500 dark:text-cyan-300 sm:text-xs">
+                    {label}
+                  </span>
+                </motion.a>
               ))}
             </motion.div>
           </motion.div>
@@ -350,14 +389,15 @@ function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
           <span className="truncate text-lg text-slate-950 dark:text-white max-[340px]:hidden">Firdavs</span>
         </a>
 
-        <nav className="hidden items-center gap-8 text-sm font-bold text-slate-600 dark:text-white/[0.74] md:flex">
+        <nav className="hidden items-center gap-1 rounded-full border border-sky-500/15 bg-sky-50/72 p-1 text-sm font-bold text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] backdrop-blur-xl transition duration-1000 dark:border-white/10 dark:bg-white/[0.06] dark:text-white/[0.74] md:flex">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="relative transition duration-1000 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-sky-500 after:transition after:duration-1000 hover:text-slate-950 hover:after:scale-x-100 dark:hover:text-white"
+              className="group relative overflow-hidden rounded-full px-5 py-2.5 transition duration-1000 hover:-translate-y-0.5 hover:bg-white hover:text-slate-950 hover:shadow-[0_14px_32px_rgba(37,99,235,0.14)] dark:hover:bg-slate-900 dark:hover:text-white"
             >
-              {item.label}
+              <span className="absolute inset-y-1 left-1 w-8 -translate-x-12 rounded-full bg-cyan-300/30 blur-md transition duration-1000 group-hover:translate-x-28" />
+              <span className="relative">{item.label}</span>
             </a>
           ))}
         </nav>
@@ -387,14 +427,14 @@ function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
       <AnimatePresence>
         {menuOpen && (
           <motion.nav
-            className="mx-auto mt-3 flex max-w-6xl gap-2 overflow-x-auto rounded-lg border border-sky-400/20 bg-white/90 p-2 text-sm font-extrabold text-slate-700 shadow-glow backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/[0.94] dark:text-white md:hidden"
+            className="mx-auto mt-3 flex max-w-6xl gap-2 overflow-x-auto rounded-2xl border border-sky-400/20 bg-white/90 p-2 text-sm font-extrabold text-slate-700 shadow-glow backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/[0.94] dark:text-white md:hidden"
             initial={{ opacity: 0, y: -12, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -12, filter: "blur(8px)" }}
             transition={{ duration: 0.45 }}
           >
             {navItems.map((item) => (
-              <a key={item.href} href={item.href} className="whitespace-nowrap rounded-md px-4 py-3 transition hover:bg-sky-100 dark:hover:bg-slate-800">
+              <a key={item.href} href={item.href} className="whitespace-nowrap rounded-full px-4 py-3 transition hover:bg-sky-100 dark:hover:bg-slate-800">
                 {item.label}
               </a>
             ))}
@@ -597,11 +637,15 @@ function ContactSection() {
               rel={href.startsWith("http") ? "noreferrer" : undefined}
               whileHover={{ x: 8 }}
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="glass-panel flex min-h-16 items-center gap-4 rounded-lg p-4 font-extrabold"
+              className="glass-panel group flex min-h-16 items-center gap-4 overflow-hidden rounded-lg p-4 font-extrabold"
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-sky-100 text-blue-700 transition duration-1000 dark:bg-slate-950 dark:text-cyan-300">
+              <motion.span
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-sky-100 text-blue-700 shadow-glow transition duration-1000 group-hover:bg-white dark:bg-slate-950 dark:text-cyan-300"
+                animate={{ y: [0, -4, 0], rotate: [0, 3, -3, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
                 <Icon size={20} />
-              </span>
+              </motion.span>
               <span className="min-w-0">
                 <span className="block text-xs uppercase tracking-[0.18em] text-sky-500 dark:text-cyan-300">{label}</span>
                 <span className="block break-all text-sm sm:text-base">{value}</span>
