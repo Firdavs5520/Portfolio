@@ -5,6 +5,8 @@
 @layer base {
   html {
     scroll-padding-top: 96px;
+    scrollbar-color: #38bdf8 #020817;
+    scrollbar-width: thin;
   }
 
   body {
@@ -14,8 +16,8 @@
   }
 
   * {
-    user-select: none;
-    -webkit-user-select: none;
+    user-select: none !important;
+    -webkit-user-select: none !important;
   }
 
   *::selection {
@@ -26,6 +28,46 @@
   button,
   a {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus,
+  a:focus {
+    outline: none;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: none;
+    border-radius: 12px;
+    box-shadow:
+      0 0 0 3px rgba(103, 232, 249, 0.56),
+      0 0 0 7px rgba(14, 165, 233, 0.16),
+      0 14px 34px rgba(56, 189, 248, 0.18);
+  }
+
+  img {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #020817;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background:
+      linear-gradient(180deg, #2563eb, #38bdf8);
+    border: 3px solid #020817;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background:
+      linear-gradient(180deg, #38bdf8, #bae6fd);
   }
 }
 

@@ -116,13 +116,6 @@ const socialCards = [
     Icon: SiTelegram,
     color: "text-sky-500",
     ring: "from-sky-500/20 to-cyan-300/20"
-  },
-  {
-    label: "Aloqa",
-    href: "#contact",
-    Icon: Send,
-    color: "text-cyan-400",
-    ring: "from-blue-600/20 to-cyan-300/20"
   }
 ];
 
@@ -192,6 +185,22 @@ function App() {
   const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 24, restDelta: 0.001 });
   const heroY = useTransform(scrollYProgress, [0, 0.35], [0, 90]);
   const currentYear = useMemo(() => new Date().getFullYear(), []);
+
+  useEffect(() => {
+    const blockSelection = (event) => event.preventDefault();
+
+    document.addEventListener("copy", blockSelection);
+    document.addEventListener("cut", blockSelection);
+    document.addEventListener("selectstart", blockSelection);
+    document.addEventListener("dragstart", blockSelection);
+
+    return () => {
+      document.removeEventListener("copy", blockSelection);
+      document.removeEventListener("cut", blockSelection);
+      document.removeEventListener("selectstart", blockSelection);
+      document.removeEventListener("dragstart", blockSelection);
+    };
+  }, []);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -270,18 +279,21 @@ function App() {
       />
 
       <main id="top">
-        <section className="relative isolate min-h-[820px] overflow-hidden pt-24 sm:min-h-[760px] lg:min-h-[880px]">
+        <section className="relative isolate min-h-[760px] overflow-hidden pt-20 sm:min-h-[760px] lg:min-h-[880px]">
           <motion.img
             src={heroImage}
             alt=""
-            className="absolute inset-0 -z-20 h-full w-full object-cover object-[62%_center] opacity-85 transition duration-1000 max-sm:opacity-45 dark:opacity-74 dark:max-sm:opacity-48"
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-[68%_center] opacity-85 transition duration-1000 max-sm:opacity-34 dark:opacity-74 dark:max-sm:opacity-36"
             style={{ y: heroY }}
+            fetchPriority="high"
+            decoding="async"
+            draggable="false"
           />
           <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(248,251,255,0.98)_0%,rgba(239,246,255,0.84)_46%,rgba(37,99,235,0.10)_100%)] transition duration-1000 dark:bg-[linear-gradient(90deg,rgba(2,8,23,0.95)_0%,rgba(8,24,48,0.72)_48%,rgba(14,55,112,0.20)_100%)]" />
           <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(90deg,rgba(37,99,235,0.08)_0_1px,transparent_1px_86px)] opacity-80 dark:bg-[repeating-linear-gradient(90deg,rgba(147,197,253,0.08)_0_1px,transparent_1px_86px)]" />
 
           <motion.div
-            className="section-shell flex min-h-[720px] flex-col justify-center pb-16 pt-20 sm:pt-28 lg:min-h-[820px]"
+            className="section-shell flex min-h-[680px] flex-col justify-center pb-12 pt-28 sm:min-h-[720px] sm:pt-28 lg:min-h-[820px]"
             variants={stagger}
             initial="hidden"
             animate="visible"
@@ -320,38 +332,29 @@ function App() {
                 <Send size={18} />
                 Bog'lanish
               </a>
-            </motion.div>
 
-            <motion.div
-              variants={fadeUp}
-              className="mt-10 grid max-w-3xl grid-cols-3 gap-3"
-            >
-              {socialCards.map(({ label, href, Icon, color, ring }, index) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noreferrer" : undefined}
-                  className="glass-panel group relative grid min-h-28 place-items-center overflow-hidden rounded-lg p-3 text-center sm:min-h-24 sm:p-4"
-                  whileHover={{ y: -8, scale: 1.025 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                  aria-label={label}
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${ring} opacity-0 transition duration-1000 group-hover:opacity-100`} />
-                  <div className="absolute inset-x-5 top-3 h-px origin-left bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent motion-safe:animate-pulseLine" />
-                  <motion.span
-                    className={`relative grid h-14 w-14 place-items-center rounded-2xl border border-sky-300/20 bg-white/70 text-3xl shadow-glow backdrop-blur-xl transition duration-1000 dark:bg-slate-950/70 ${color}`}
-                    animate={{ y: [0, -7, 0], rotate: [0, index % 2 ? -4 : 4, 0] }}
-                    transition={{ duration: 3.8 + index * 0.18, repeat: Infinity, ease: "easeInOut" }}
+              <div className="glass-panel flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-3 min-[440px]:w-auto">
+                {socialCards.map(({ label, href, Icon, color, ring }, index) => (
+                  <motion.a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group relative grid h-11 w-11 place-items-center overflow-hidden rounded-lg border border-sky-300/20 bg-white/70 shadow-glow transition duration-1000 hover:-translate-y-1 dark:bg-slate-950/70"
+                    whileTap={{ scale: 0.94 }}
+                    aria-label={label}
                   >
-                    <Icon size={label === "Aloqa" ? 28 : undefined} />
-                  </motion.span>
-                  <span className="relative mt-2 text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-sky-500 dark:text-cyan-300 sm:text-xs">
-                    {label}
-                  </span>
-                </motion.a>
-              ))}
+                    <span className={`absolute inset-0 bg-gradient-to-br ${ring} opacity-0 transition duration-1000 group-hover:opacity-100`} />
+                    <motion.span
+                      className={`relative text-2xl ${color}`}
+                      animate={{ y: [0, -5, 0], rotate: [0, index ? -4 : 4, 0] }}
+                      transition={{ duration: 3.6 + index * 0.2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <Icon />
+                    </motion.span>
+                  </motion.a>
+                ))}
+              </div>
             </motion.div>
           </motion.div>
         </section>
@@ -427,14 +430,14 @@ function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
       <AnimatePresence>
         {menuOpen && (
           <motion.nav
-            className="mx-auto mt-3 flex max-w-6xl gap-2 overflow-x-auto rounded-2xl border border-sky-400/20 bg-white/90 p-2 text-sm font-extrabold text-slate-700 shadow-glow backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/[0.94] dark:text-white md:hidden"
+            className="mx-auto mt-3 grid max-w-6xl grid-cols-2 gap-2 rounded-2xl border border-sky-400/20 bg-white/90 p-2 text-sm font-extrabold text-slate-700 shadow-glow backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/[0.94] dark:text-white md:hidden"
             initial={{ opacity: 0, y: -12, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -12, filter: "blur(8px)" }}
             transition={{ duration: 0.45 }}
           >
             {navItems.map((item) => (
-              <a key={item.href} href={item.href} className="whitespace-nowrap rounded-full px-4 py-3 transition hover:bg-sky-100 dark:hover:bg-slate-800">
+              <a key={item.href} href={item.href} className="rounded-full px-4 py-3 text-center transition hover:bg-sky-100 dark:hover:bg-slate-800">
                 {item.label}
               </a>
             ))}
@@ -529,6 +532,9 @@ function ProjectsSection() {
                   className="h-full w-full object-cover opacity-90 transition duration-1000 group-hover:scale-110"
                   animate={{ y: [0, index % 2 ? -8 : 8, 0] }}
                   transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-sky-500/[0.12]" />
                 <motion.div
