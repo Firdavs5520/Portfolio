@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Lenis from "lenis";
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import {
   ArrowUpRight,
   BriefcaseBusiness,
@@ -29,6 +30,9 @@ import heroImage from "../assets/portfolio-hero.png";
 import medlineImage from "../assets/project-sampi-medline.png";
 import gilamImage from "../assets/project-gilam-yuvish.png";
 import vercelImage from "../assets/project-sampi-vercel.png";
+
+const HeroScene = React.lazy(() => import("./components/HeroScene.jsx"));
+const MotionAccent = React.lazy(() => import("./components/MotionAccent.jsx"));
 
 const navItems = [
   { href: "#about", label: "Men haqimda" },
@@ -181,6 +185,7 @@ function useTheme() {
 function App() {
   const { theme, switching, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [canShowPremiumMotion, setCanShowPremiumMotion] = useState(false);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 24, restDelta: 0.001 });
   const heroY = useTransform(scrollYProgress, [0, 0.35], [0, 90]);
@@ -199,6 +204,79 @@ function App() {
       document.removeEventListener("cut", blockSelection);
       document.removeEventListener("selectstart", blockSelection);
       document.removeEventListener("dragstart", blockSelection);
+    };
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
+    const update = () => setCanShowPremiumMotion(media.matches);
+
+    update();
+    media.addEventListener("change", update);
+
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    let ctx;
+    let isMounted = true;
+
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([gsapModule, scrollTriggerModule]) => {
+      if (!isMounted) {
+        return;
+      }
+
+      const gsap = gsapModule.gsap;
+      const ScrollTrigger = scrollTriggerModule.ScrollTrigger;
+
+      gsap.registerPlugin(ScrollTrigger);
+      ctx = gsap.context(() => {
+      gsap.utils.toArray("[data-gsap='reveal']").forEach((element) => {
+        gsap.fromTo(
+          element,
+          { autoAlpha: 0, y: 54, filter: "blur(12px)" },
+          {
+            autoAlpha: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 82%",
+              once: true
+            }
+          }
+        );
+      });
+
+        gsap.to("[data-gsap='hero-orbit']", {
+          yPercent: -10,
+          scale: 1.04,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#top",
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.75
+          }
+        });
+
+        gsap.to("[data-gsap='nav-shell']", {
+          backgroundColor: "rgba(2, 8, 23, 0.92)",
+          backdropFilter: "blur(24px)",
+          scrollTrigger: {
+            trigger: "#top",
+            start: "120px top",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+    });
+
+    return () => {
+      isMounted = false;
+      ctx?.revert();
     };
   }, []);
 
@@ -249,36 +327,37 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f8fbff_0%,#eef6ff_44%,#e2efff_100%)] text-slate-950 transition-colors duration-1000 dark:bg-[linear-gradient(180deg,#020817_0%,#020817_46%,#06152a_100%)] dark:text-white">
-      <motion.div
-        className="fixed left-0 top-0 z-[70] h-1 origin-left bg-gradient-to-r from-blue-600 via-sky-400 to-cyan-200 shadow-[0_0_24px_rgba(56,189,248,0.75)]"
-        style={{ scaleX: progress, width: "100%" }}
-      />
+    <Tooltip.Provider delayDuration={140} skipDelayDuration={80}>
+      <div className="min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f8fbff_0%,#eef6ff_44%,#e2efff_100%)] text-slate-950 transition-colors duration-1000 dark:bg-[linear-gradient(180deg,#020817_0%,#020817_46%,#06152a_100%)] dark:text-white">
+        <motion.div
+          className="fixed left-0 top-0 z-[70] h-1 origin-left bg-gradient-to-r from-blue-600 via-sky-400 to-cyan-200 shadow-[0_0_24px_rgba(56,189,248,0.75)]"
+          style={{ scaleX: progress, width: "100%" }}
+        />
 
-      <AnimatePresence>
-        {switching && (
-          <motion.div
-            className="pointer-events-none fixed inset-[-28px] z-[100] bg-slate-950/20 backdrop-blur-xl"
-            initial={{ opacity: 0, scale: 1.045 }}
-            animate={{ opacity: [0, 1, 0.78, 0], scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="absolute left-1/2 top-16 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-300/30 blur-3xl" />
-            <div className="absolute bottom-10 left-8 h-64 w-64 rounded-full bg-blue-700/30 blur-3xl" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {switching && (
+            <motion.div
+              className="pointer-events-none fixed inset-[-28px] z-[100] bg-slate-950/20 backdrop-blur-xl"
+              initial={{ opacity: 0, scale: 1.045 }}
+              animate={{ opacity: [0, 1, 0.78, 0], scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="absolute left-1/2 top-16 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-300/30 blur-3xl" />
+              <div className="absolute bottom-10 left-8 h-64 w-64 rounded-full bg-blue-700/30 blur-3xl" />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <Header
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        theme={theme}
-        switching={switching}
-        toggleTheme={toggleTheme}
-      />
+        <Header
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
+          theme={theme}
+          switching={switching}
+          toggleTheme={toggleTheme}
+        />
 
-      <main id="top">
+        <main id="top">
         <section className="relative isolate min-h-[760px] overflow-hidden pt-20 sm:min-h-[760px] lg:min-h-[880px]">
           <motion.img
             src={heroImage}
@@ -289,6 +368,11 @@ function App() {
             decoding="async"
             draggable="false"
           />
+          {canShowPremiumMotion && (
+            <Suspense fallback={null}>
+              <HeroScene />
+            </Suspense>
+          )}
           <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(248,251,255,0.98)_0%,rgba(239,246,255,0.84)_46%,rgba(37,99,235,0.10)_100%)] transition duration-1000 dark:bg-[linear-gradient(90deg,rgba(2,8,23,0.95)_0%,rgba(8,24,48,0.72)_48%,rgba(14,55,112,0.20)_100%)]" />
           <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(90deg,rgba(37,99,235,0.08)_0_1px,transparent_1px_86px)] opacity-80 dark:bg-[repeating-linear-gradient(90deg,rgba(147,197,253,0.08)_0_1px,transparent_1px_86px)]" />
 
@@ -344,14 +428,26 @@ function App() {
                     whileTap={{ scale: 0.94 }}
                     aria-label={label}
                   >
-                    <span className={`absolute inset-0 bg-gradient-to-br ${ring} opacity-0 transition duration-1000 group-hover:opacity-100`} />
-                    <motion.span
-                      className={`relative text-2xl ${color}`}
-                      animate={{ y: [0, -5, 0], rotate: [0, index ? -4 : 4, 0] }}
-                      transition={{ duration: 3.6 + index * 0.2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <Icon />
-                    </motion.span>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <span className="grid h-full w-full place-items-center">
+                          <span className={`absolute inset-0 bg-gradient-to-br ${ring} opacity-0 transition duration-1000 group-hover:opacity-100`} />
+                          <motion.span
+                            className={`relative text-2xl ${color}`}
+                            animate={{ y: [0, -5, 0], rotate: [0, index ? -4 : 4, 0] }}
+                            transition={{ duration: 3.6 + index * 0.2, repeat: Infinity, ease: "easeInOut" }}
+                          >
+                            <Icon />
+                          </motion.span>
+                        </span>
+                      </Tooltip.Trigger>
+                      <Tooltip.Portal>
+                        <Tooltip.Content className="rounded-lg border border-cyan-300/20 bg-slate-950/95 px-3 py-2 text-xs font-extrabold text-cyan-100 shadow-glow backdrop-blur-xl" sideOffset={10}>
+                          {label}
+                          <Tooltip.Arrow className="fill-slate-950" />
+                        </Tooltip.Content>
+                      </Tooltip.Portal>
+                    </Tooltip.Root>
                   </motion.a>
                 ))}
               </div>
@@ -363,23 +459,24 @@ function App() {
         <ProjectsSection />
         <SkillsSection />
         <ContactSection />
-      </main>
+        </main>
 
-      <footer className="border-t border-sky-500/15 bg-sky-50 px-4 py-7 text-sm font-semibold text-slate-600 transition duration-1000 dark:border-white/10 dark:bg-slate-950 dark:text-white/[0.62] sm:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <span>{currentYear} Firdavs. Portfolio doim yangilanib boradi.</span>
-          <a href="#top" className="font-extrabold text-sky-600 transition duration-1000 hover:text-blue-700 dark:text-cyan-300">
-            Yuqoriga
-          </a>
-        </div>
-      </footer>
-    </div>
+        <footer className="border-t border-sky-500/15 bg-sky-50 px-4 py-7 text-sm font-semibold text-slate-600 transition duration-1000 dark:border-white/10 dark:bg-slate-950 dark:text-white/[0.62] sm:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <span>{currentYear} Firdavs. Portfolio doim yangilanib boradi.</span>
+            <a href="#top" className="font-extrabold text-sky-600 transition duration-1000 hover:text-blue-700 dark:text-cyan-300">
+              Yuqoriga
+            </a>
+          </div>
+        </footer>
+      </div>
+    </Tooltip.Provider>
   );
 }
 
 function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-sky-500/15 bg-white/[0.82] px-3 py-3 shadow-[0_18px_52px_rgba(37,99,235,0.08)] backdrop-blur-2xl transition duration-1000 dark:border-white/10 dark:bg-slate-950/[0.78] dark:shadow-none sm:px-8">
+    <header data-gsap="nav-shell" className="fixed inset-x-0 top-0 z-50 border-b border-sky-500/15 bg-white/[0.82] px-3 py-3 shadow-[0_18px_52px_rgba(37,99,235,0.08)] backdrop-blur-2xl transition duration-1000 dark:border-white/10 dark:bg-slate-950/[0.78] dark:shadow-none sm:px-8">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
         <a href="#top" className="group flex min-w-0 items-center gap-3 font-extrabold">
           <motion.span
@@ -399,8 +496,20 @@ function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
               href={item.href}
               className="group relative overflow-hidden rounded-full px-5 py-2.5 transition duration-1000 hover:-translate-y-0.5 hover:bg-white hover:text-slate-950 hover:shadow-[0_14px_32px_rgba(37,99,235,0.14)] dark:hover:bg-slate-900 dark:hover:text-white"
             >
-              <span className="absolute inset-y-1 left-1 w-8 -translate-x-12 rounded-full bg-cyan-300/30 blur-md transition duration-1000 group-hover:translate-x-28" />
-              <span className="relative">{item.label}</span>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <span className="relative block">
+                    <span className="absolute inset-y-1 left-1 w-8 -translate-x-12 rounded-full bg-cyan-300/30 blur-md transition duration-1000 group-hover:translate-x-28" />
+                    <span className="relative">{item.label}</span>
+                  </span>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content className="rounded-lg border border-cyan-300/20 bg-slate-950/95 px-3 py-2 text-xs font-extrabold text-cyan-100 shadow-glow backdrop-blur-xl" sideOffset={12}>
+                    {item.label} bo'limiga o'tish
+                    <Tooltip.Arrow className="fill-slate-950" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
             </a>
           ))}
         </nav>
@@ -450,7 +559,7 @@ function Header({ menuOpen, setMenuOpen, theme, switching, toggleTheme }) {
 
 function AboutSection() {
   return (
-    <section id="about" className="bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
+    <section id="about" data-gsap="reveal" className="bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
       <motion.div
         className="section-shell grid gap-9 lg:grid-cols-[0.95fr_0.82fr] lg:items-start"
         variants={stagger}
@@ -503,7 +612,7 @@ function AboutSection() {
 
 function ProjectsSection() {
   return (
-    <section id="work" className="py-16 sm:py-24">
+    <section id="work" data-gsap="reveal" className="py-16 sm:py-24">
       <motion.div
         className="section-shell"
         variants={stagger}
@@ -569,7 +678,7 @@ function ProjectsSection() {
 
 function SkillsSection() {
   return (
-    <section id="skills" className="relative overflow-hidden bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
+    <section id="skills" data-gsap="reveal" className="relative overflow-hidden bg-white py-16 transition duration-1000 dark:bg-slate-900 sm:py-24">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,rgba(37,99,235,0.07)_0_1px,transparent_1px_76px)] dark:bg-[repeating-linear-gradient(90deg,rgba(147,197,253,0.07)_0_1px,transparent_1px_76px)]" />
       <motion.div
         className="section-shell relative"
@@ -613,7 +722,7 @@ function SkillsSection() {
 
 function ContactSection() {
   return (
-    <section id="contact" className="relative overflow-hidden py-16 sm:py-24">
+    <section id="contact" data-gsap="reveal" className="relative overflow-hidden py-16 sm:py-24">
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(248,251,255,0.96),rgba(191,219,254,0.68))] transition duration-1000 dark:bg-[linear-gradient(135deg,rgba(2,8,23,0.98),rgba(14,55,112,0.72))]" />
       <motion.div
         className="section-shell relative grid gap-10 lg:grid-cols-[0.95fr_0.62fr] lg:items-start"
@@ -631,6 +740,7 @@ function ContactSection() {
             Portfolio, landing page yoki web ilova kerak bo'lsa, men bilan bog'lanish
             mumkin. Vazifani tushunib, kerakli yechimni aniq va tartibli qilib chiqaraman.
           </p>
+          <MotionAccentGate />
         </motion.div>
 
         <motion.div variants={stagger} className="grid gap-3">
@@ -661,6 +771,41 @@ function ContactSection() {
         </motion.div>
       </motion.div>
     </section>
+  );
+}
+
+function MotionAccentGate() {
+  const gateRef = useRef(null);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (isReady || !gateRef.current) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsReady(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "180px 0px" }
+    );
+
+    observer.observe(gateRef.current);
+
+    return () => observer.disconnect();
+  }, [isReady]);
+
+  return (
+    <div ref={gateRef} className="min-h-0">
+      {isReady && (
+        <Suspense fallback={null}>
+          <MotionAccent />
+        </Suspense>
+      )}
+    </div>
   );
 }
 

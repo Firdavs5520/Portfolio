@@ -25,6 +25,7 @@ Tahrirlash kerak bo'ladigan asosiy joylar:
 - `src/App.jsx` ichida matnlar, loyiha havolalari va kontaktlar.
 - `src/index.css` ichida Tailwind global qatlamlari.
 - `tailwind.config.js` ichida animatsiya va theme sozlamalari.
+- `src/components/` ichida 3D, Rive va dotLottie premium animatsiya qismlari.
 - `assets/portfolio-hero.png` hero fon rasmi.
 
 Preview screenshotlar `artifacts` papkasida saqlangan.
